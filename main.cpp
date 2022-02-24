@@ -1,3 +1,5 @@
+#define _WINSOCK_DEPRECATED_NO_WARNINGS
+
 #include <WinSock2.h>
 #include <iostream>
 
@@ -17,7 +19,7 @@ int main()
 	}
 
 	//2.create socket
-	SOCKET ServerSocket;
+	SOCKET ServerSocket;//listen 클라이언트 대기 소켓(문)
 
 	ServerSocket = socket(
 		AF_INET,
@@ -52,23 +54,31 @@ int main()
 		exit(-1);
 	}
 
-	//4. 수락해서 클라이언트와 연결을 완성
-	SOCKADDR_IN ClientAddr;
-	int ClinetAddrSize = sizeof(ClientAddr);
-	SOCKET ClientSocket = 0;
-	ClientSocket = accept(ServerSocket, (SOCKADDR*)&ClientAddr, &ClinetAddrSize);
-	if (ClientSocket == SOCKET_ERROR)
+	while (1)
 	{
-		cout << "accept Error : " << GetLastError() << endl;
-		exit(-1);
+		//4. 수락해서 클라이언트와 연결을 완성
+		SOCKADDR_IN ClientAddr;
+		int ClinetAddrSize = sizeof(ClientAddr);
+		SOCKET ClientSocket; //클라이언트 된 통로(문)
+		ClientSocket = accept(ServerSocket, (SOCKADDR*)&ClientAddr, &ClinetAddrSize);
+		if (ClientSocket == SOCKET_ERROR)
+		{
+			cout << "accept Error : " << GetLastError() << endl;
+			exit(-1);
+		}
+
+		//network to host short
+		cout << "connect ip : " << inet_ntoa(ClientAddr.sin_addr) << endl;
+		cout << "connect port : " << ntohs(ClientAddr.sin_port) << endl;
+
+		//5. 보낸다 자료를 클라이언트한테
+		char Message[] = "Hello World"; //'\0'
+		send(ClientSocket, Message, strlen(Message) + 1, 0);
+
+		//6. 연결 종료
+		closesocket(ClientSocket);
 	}
 
-	//5. 보낸다 자료를 클라이언트한테
-	char Message[] = "Hello World"; //'\0'
-	send(ClientSocket, Message, strlen(Message) + 1, 0);
-
-	//6. 연결 종료
-	closesocket(ClientSocket);
 	closesocket(ServerSocket);
 
 	//7.Winsock 종료, 윈도우만 합니다.
