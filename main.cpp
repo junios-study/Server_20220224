@@ -2,10 +2,18 @@
 
 #include <WinSock2.h>
 #include <iostream>
+#include <string>
 
 using namespace std;
 
 #pragma comment(lib, "ws2_32.lib")
+
+
+
+struct NumberPacket {
+	int Number1;
+	int Number2;
+};
 
 int main()
 {
@@ -73,14 +81,19 @@ int main()
 		cout << "connect port : " << ntohs(ClientAddr.sin_port) << endl;
 
 		//5. 보낸다 자료를 클라이언트한테
-		char Message[1024] = { 0, };
-		recv(ClientSocket, Message, 1024-1, 0);
+		NumberPacket Packet;
+		recv(ClientSocket, (char*)(&Packet), 8, 0);
 
-		cout << "client sended : " << Message << endl;
+		cout << "client sended : " << Packet.Number1 << endl;
+		cout << "client sended : " << Packet.Number2 << endl;
 
-		send(ClientSocket, Message, strlen(Message) + 1, 0);
+		int IntResult = Packet.Number1 + Packet.Number2;
 
-		cout << "client send : " << Message << endl;
+		string Result = to_string(IntResult);
+
+		send(ClientSocket, Result.c_str(), Result.length() + 1, 0);
+
+		cout << "client send : " << Result << endl;
 
 		//6. 연결 종료
 		closesocket(ClientSocket);
