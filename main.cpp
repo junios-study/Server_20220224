@@ -63,7 +63,7 @@ int main()
 		exit(-1);
 	}
 
-	//5. 보낸다 자료를 클라이언트한테, 왈도체
+	//5. 보낸다 자료를 클라이언트한테
 	char Message[] = "Hello World"; //'\0'
 	send(ClientSocket, Message, strlen(Message) + 1, 0);
 
