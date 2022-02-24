@@ -81,13 +81,17 @@ int main()
 		cout << "connect port : " << ntohs(ClientAddr.sin_port) << endl;
 
 		//5. 보낸다 자료를 클라이언트한테
-		NumberPacket Packet;
-		recv(ClientSocket, (char*)(&Packet), 8, 0);
+		char Buffer[1024];
+		recv(ClientSocket, Buffer, 1024, 0);
 
-		cout << "client sended : " << Packet.Number1 << endl;
-		cout << "client sended : " << Packet.Number2 << endl;
+		string Numbers = Buffer;
+		string Number1 = Numbers.substr(0, 2);
+		string Number2 = Numbers.substr(3, 2);
 
-		int IntResult = Packet.Number1 + Packet.Number2;
+		cout << "client sended : " << Number1 << endl;
+		cout << "client sended : " << Number2 << endl;
+
+		int IntResult = stoi(Number1) + stoi(Number2);
 
 		string Result = to_string(IntResult);
 
