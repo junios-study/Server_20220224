@@ -35,7 +35,6 @@ int main()
 	SOCKADDR_IN ServerAddr;
 
 	memset(&ServerAddr, 0, sizeof(ServerAddr));
-
 	ServerAddr.sin_family = AF_INET;
 	ServerAddr.sin_port = htons(50000);
 	ServerAddr.sin_addr.s_addr = htonl(INADDR_ANY);
@@ -55,8 +54,9 @@ int main()
 
 	//4. 수락해서 클라이언트와 연결을 완성
 	SOCKADDR_IN ClientAddr;
-	int ClinetAddrSize = 0;
-	SOCKET ClientSocket = accept(ServerSocket, (SOCKADDR*)&ClientAddr, &ClinetAddrSize);
+	int ClinetAddrSize = sizeof(ClientAddr);
+	SOCKET ClientSocket = 0;
+	ClientSocket = accept(ServerSocket, (SOCKADDR*)&ClientAddr, &ClinetAddrSize);
 	if (ClientSocket == SOCKET_ERROR)
 	{
 		cout << "accept Error : " << GetLastError() << endl;
