@@ -67,13 +67,20 @@ int main()
 			exit(-1);
 		}
 
-		//network to host short
+		//inet network to address
 		cout << "connect ip : " << inet_ntoa(ClientAddr.sin_addr) << endl;
+		//network to host short
 		cout << "connect port : " << ntohs(ClientAddr.sin_port) << endl;
 
 		//5. 보낸다 자료를 클라이언트한테
-		char Message[] = "Hello World"; //'\0'
+		char Message[1024] = { 0, };
+		recv(ClientSocket, Message, 1024-1, 0);
+
+		cout << "client sended : " << Message << endl;
+
 		send(ClientSocket, Message, strlen(Message) + 1, 0);
+
+		cout << "client send : " << Message << endl;
 
 		//6. 연결 종료
 		closesocket(ClientSocket);
